@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block titulo %}Atendimento{% endblock %}
+{% block conteudo %}
+{% if not configurado %}
+<div class="card" style="max-width:460px;margin:1rem auto">
+  <h2>Iniciar atendimento</h2>
+  <form method="post" action="/atendimento/config" style="display:grid;gap:.8rem">
+    <input name="guiche" placeholder="Número ou nome do guichê (ex.: 2)" required>
+    <select name="servico_id" required>
+      <option value="">Escolha o setor…</option>
+      {% for sv in servicos %}<option value="{{ sv.id }}">{{ sv.nome }}</option>{% endfor %}
+    </select>
+    <button>Começar</button>
+  </form>
+</div>
+{% else %}
+{% if not atual %}<script>setTimeout(()=>location.reload(),10000)</script>{% endif %}
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+  <h2 style="margin:0">Guichê {{ guiche }} • {{ servico.nome }}</h2>
+  <form method="post" action="/atendimento/trocar"><button class="link">trocar guichê/setor</button></form>
+</div>
+
+<div class="card" style="text-align:center;margin-top:1rem">
+  {% if atual %}
+    <div class="mudo">Em atendimento{% if atual.prioridade %} • <span class="tag prio">★ Prioritária</span>{% endif %}</div>
+    <div class="codigo" style="margin:.6rem 0">{{ atual.codigo }}</div>
+    <div class="mudo">chamada às {{ atual.chamada_em|hora }}</div>
+    <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1rem">
+      <form method="post" action="/atendimento/rechamar"><button class="cinza">🔔 Chamar novamente</button></form>
+      <form method="post" action="/atendimento/finalizar"><button class="verde">✔ Finalizar atendimento</button></form>
+      <form method="post" action="/atendimento/ausente"><button class="verm">✖ Não compareceu</button></form>
+    </div>
+  {% else %}
+    <div class="mudo">{{ total }} senha(s) aguardando</div>
+    <form method="post" action="/atendimento/chamar" style="margin-top:1rem">
+      <button style="font-size:1.4rem;padding:1.1rem 2.2rem" {{ 'disabled' if total == 0 }}>📣 Chamar próxima senha</button>
+    </form>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h3>Fila de espera</h3>
+  <table>
+    {% for f in fila %}
+    <tr><td><strong>{{ f.codigo }}</strong></td>
+        <td>{% if f.prioridade %}<span class="tag prio">★ Prioritária</span>{% else %}<span class="tag">Normal</span>{% endif %}</td>
+        <td class="mudo">retirada às {{ f.criada_em|hora }}</td></tr>
+    {% else %}<tr><td class="mudo">Ninguém aguardando.</td></tr>{% endfor %}
+  </table>
+  {% if total > fila|length %}<p class="mudo">… e mais {{ total - fila|length }}.</p>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

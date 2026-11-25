@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Entrar{% endblock %}
+{% block conteudo %}
+<div class="card" style="max-width:380px;margin:2rem auto">
+  <h2>Acesso restrito</h2>
+  <form method="post" style="display:grid;gap:.8rem">
+    <input name="usuario" placeholder="Usuário" required autofocus>
+    <input name="senha" type="password" placeholder="Senha" required>
+    <button>Entrar</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-br"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}Atendimento ao Cidadão{% endblock %} • {{ orgao }}</title>
+<style>
+:root{--azul:#0b5fa5;--azul-esc:#08406f;--verde:#1f9d55;--bg:#f4f7fb;--card:#fff;--txt:#0f172a;--mudo:#64748b;--borda:#e2e8f0;--vermelho:#b91c1c;--amarelo:#f59e0b}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--txt);margin:0}
+header{background:linear-gradient(135deg,var(--azul),var(--azul-esc));color:#fff;padding:.9rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem}
+header .marca{font-weight:700;font-size:1.1rem;color:#fff;text-decoration:none}
+header .marca small{display:block;font-weight:400;opacity:.85;font-size:.8rem}
+nav a{color:#fff;margin-left:1.1rem;text-decoration:none;opacity:.92}
+nav a:hover{text-decoration:underline}
+main{max-width:1100px;margin:1.5rem auto;padding:0 1rem}
+.card{background:var(--card);border-radius:16px;box-shadow:0 2px 14px #0f172a14;padding:1.2rem;margin-bottom:1rem}
+h1,h2,h3{margin:.2rem 0 .8rem}
+input,select,button{font:inherit;padding:.65rem .8rem;border:1px solid #cbd5e1;border-radius:10px}
+button,.btn{background:var(--azul);color:#fff;border:0;cursor:pointer;text-decoration:none;display:inline-block;border-radius:10px;padding:.65rem 1.1rem}
+button:hover,.btn:hover{background:var(--azul-esc)}
+.verde{background:var(--verde)}.verde:hover{background:#177a43}
+.cinza{background:#64748b}.cinza:hover{background:#475569}
+.verm{background:var(--vermelho)}.verm:hover{background:#991b1b}
+.link{background:none;color:var(--azul);padding:0;text-decoration:underline}
+.msg{background:#fef3c7;border-left:4px solid var(--amarelo);padding:.7rem 1rem;border-radius:8px;margin-bottom:1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+.tag{padding:.15rem .6rem;border-radius:99px;font-size:.8rem;background:var(--borda);white-space:nowrap}
+.tag.prio{background:#fde68a}.tag.ok{background:#bbf7d0}.tag.no{background:#fecaca}
+.mudo{color:var(--mudo)}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:.55rem;border-bottom:1px solid var(--borda);vertical-align:middle}
+.codigo{font-size:4.5rem;font-weight:800;letter-spacing:.04em;color:var(--azul);line-height:1}
+@media print{header,.nao-imprimir{display:none!important}body{background:#fff}.card{box-shadow:none}}
+</style></head><body>
+<header>
+  <a class="marca" href="/">{{ orgao }}<small>Sistema de senhas de atendimento</small></a>
+  <nav>
+    <a href="/totem">Retirar senha</a><a href="/painel" target="_blank">Painel</a>
+    <a href="/atendimento">Atendimento</a><a href="/admin">Gestão</a>
+    {% if logado %}<a href="/logout">Sair</a>{% endif %}
+  </nav>
+</header>
+<main>
+  {% for m in get_flashed_messages() %}<div class="msg">{{ m }}</div>{% endfor %}
+  {% block conteudo %}{% endblock %}
+</main></body></html>

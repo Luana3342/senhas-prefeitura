@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Retirar senha{% endblock %}
+{% block conteudo %}
+<h1>Retire sua senha</h1>
+<p class="mudo">Escolha o setor. Use <strong>Prioritária</strong> se você é idoso (60+), gestante, lactante, pessoa com deficiência ou está com criança de colo.</p>
+<div class="grid">
+  {% for sv in servicos %}
+  <div class="card">
+    <h2>{{ sv.nome }}</h2>
+    <form method="post" action="/totem/retirar" style="display:grid;gap:.6rem">
+      <input type="hidden" name="servico_id" value="{{ sv.id }}">
+      <button name="prioridade" value="0" style="font-size:1.2rem;padding:1rem">Senha normal</button>
+      <button name="prioridade" value="1" class="verde" style="font-size:1.2rem;padding:1rem">★ Prioritária</button>
+    </form>
+  </div>
+  {% else %}
+  <p class="mudo">Nenhum setor disponível no momento.</p>
+  {% endfor %}
+</div>
+{% endblock %}

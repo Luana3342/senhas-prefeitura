@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block titulo %}Senha {{ s.codigo }}{% endblock %}
+{% block conteudo %}
+{% if s.status in ('aguardando', 'chamada') %}<meta http-equiv="refresh" content="6">{% endif %}
+<div class="card" style="max-width:520px;margin:1rem auto;text-align:center">
+  <div class="mudo">{{ s.servico }}</div>
+  <div class="codigo" style="margin:.6rem 0">{{ s.codigo }}</div>
+  <div><span class="tag {{ 'prio' if s.prioridade }}">{{ s.tipo }}</span>
+       <span class="mudo">retirada às {{ s.criada_em|hora }}</span></div>
+  <hr style="border:0;border-top:1px solid var(--borda);margin:1rem 0">
+  {% if s.status == 'aguardando' %}
+    <h2>Aguarde ser chamado(a)</h2>
+    <p class="mudo">Pessoas na sua frente (aproximado): <strong>{{ na_frente }}</strong></p>
+    <p class="mudo">Acompanhe pela TV. Esta página se atualiza sozinha.</p>
+  {% elif s.status == 'chamada' %}
+    <h2 style="color:var(--verde)">Sua vez! Dirija-se ao guichê {{ s.guiche }}</h2>
+  {% elif s.status == 'finalizada' %}
+    <h2>Atendimento concluído</h2><p class="mudo">Obrigado!</p>
+  {% else %}
+    <h2>Senha encerrada</h2><p class="mudo">Você não compareceu quando foi chamado(a). Retire uma nova senha, se ainda precisar.</p>
+  {% endif %}
+  <div class="nao-imprimir" style="margin-top:1rem;display:flex;gap:.6rem;justify-content:center">
+    <button onclick="window.print()">🖨 Imprimir</button>
+    <a class="btn cinza" href="/totem">Nova senha</a>
+  </div>
+</div>
+{% endblock %}

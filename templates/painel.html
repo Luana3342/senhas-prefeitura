@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-br"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de chamadas • {{ orgao }}</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#071a2e;color:#fff;height:100vh;display:flex;flex-direction:column}
+header{padding:1rem 2rem;background:#0b5fa5;display:flex;justify-content:space-between;align-items:center;font-size:1.4rem;font-weight:700}
+#relogio{font-variant-numeric:tabular-nums}
+.corpo{flex:1;display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;padding:1.5rem}
+.atual{background:#0e2a47;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1rem}
+.rotulo{font-size:1.6rem;opacity:.8}
+#codigo{font-size:min(16vw,12rem);font-weight:800;letter-spacing:.05em;line-height:1.05}
+#guiche{font-size:min(6vw,4rem);color:#4ade80;font-weight:700}
+#servico{font-size:2rem;margin-top:.6rem}
+.piscar{animation:pisca 1s ease 4}
+@keyframes pisca{0%,100%{background:#0e2a47}50%{background:#1d5c2b}}
+.lateral{background:#0e2a47;border-radius:24px;padding:1.2rem}
+.lateral h2{margin:.2rem 0 1rem;font-size:1.5rem;opacity:.85}
+.item{display:flex;justify-content:space-between;align-items:center;padding:.8rem .4rem;border-bottom:1px solid #ffffff22;font-size:1.8rem}
+.item small{display:block;font-size:.95rem;opacity:.7}
+.item b{font-size:2rem}
+footer{padding:.8rem 2rem;background:#0b2037;display:flex;justify-content:space-between;font-size:1.2rem}
+#som{background:#f59e0b;color:#000;border:0;border-radius:10px;padding:.5rem 1rem;font-size:1rem;cursor:pointer}
+@media(max-width:800px){.corpo{grid-template-columns:1fr}}
+</style></head><body>
+<header><span>{{ orgao }}</span><span><button id="som">🔊 Ativar som</button> <span id="relogio"></span></span></header>
+<div class="corpo">
+  <div class="atual" id="atual">
+    <div class="rotulo">SENHA CHAMADA</div>
+    <div id="codigo">—</div>
+    <div id="guiche"></div>
+    <div id="servico"></div>
+  </div>
+  <div class="lateral"><h2>Últimas chamadas</h2><div id="lista"></div></div>
+</div>
+<footer><span>Aguardando atendimento: <b id="aguardando">0</b></span><span>★ Atendimento prioritário: idosos, gestantes, lactantes e pessoas com deficiência</span></footer>
+<script>
+let ultimaChave = null, somAtivo = false;
+const $ = id => document.getElementById(id);
+function bip(){try{const c=new (window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.2;o.start();o.stop(c.currentTime+.4);}catch(e){}}
+function falar(t){if(!('speechSynthesis' in window))return;const u=new SpeechSynthesisUtterance(t);u.lang='pt-BR';u.rate=.9;setTimeout(()=>speechSynthesis.speak(u),500);}
+$('som').onclick=()=>{somAtivo=true;$('som').style.display='none';bip();};
+function relogio(){$('relogio').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+setInterval(relogio,1000);relogio();
+async function atualizar(){
+  try{
+    const d = await (await fetch('/api/painel',{cache:'no-store'})).json();
+    $('aguardando').textContent = d.aguardando;
+    const a = d.atual;
+    if(a){
+      $('codigo').textContent = a.codigo;
+      $('guiche').textContent = 'Guichê ' + a.guiche;
+      $('servico').textContent = a.servico + (a.prioridade ? '  ★ Prioritária' : '');
+      const chave = a.codigo + '|' + a.chamada_em;
+      if(ultimaChave !== null && chave !== ultimaChave){
+        $('atual').classList.remove('piscar'); void $('atual').offsetWidth; $('atual').classList.add('piscar');
+        if(somAtivo){bip();falar(a.fala);}
+      }
+      ultimaChave = chave;
+    } else { ultimaChave = ultimaChave || ''; }
+    const lista = $('lista'); lista.innerHTML = '';
+    d.ultimas.forEach(u => {
+      const row = document.createElement('div'); row.className='item';
+      const esq = document.createElement('div'); const b = document.createElement('b'); b.textContent = u.codigo;
+      const s = document.createElement('small'); s.textContent = u.servico; esq.append(b, s);
+      const dir = document.createElement('div'); dir.textContent = 'Guichê ' + u.guiche;
+      row.append(esq, dir); lista.append(row);
+    });
+  }catch(e){}
+}
+atualizar(); setInterval(atualizar, 3000);
+</script></body></html>

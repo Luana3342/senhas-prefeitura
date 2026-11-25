@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h1>Atendimento ao Cidadão</h1>
+<p class="mudo">Escolha o que deseja acessar.</p>
+<div class="grid">
+  <a class="card" href="/totem" style="text-decoration:none;color:inherit"><h2>🎫 Retirar senha</h2><p class="mudo">Tela do totem para o cidadão pegar a senha, normal ou prioritária.</p></a>
+  <a class="card" href="/painel" target="_blank" style="text-decoration:none;color:inherit"><h2>📺 Painel de chamadas</h2><p class="mudo">Tela para a TV da recepção, com aviso de voz.</p></a>
+  <a class="card" href="/atendimento" style="text-decoration:none;color:inherit"><h2>🧑‍💼 Atendimento</h2><p class="mudo">Área do atendente: chamar, rechamar e finalizar senhas. Exige login.</p></a>
+  <a class="card" href="/admin" style="text-decoration:none;color:inherit"><h2>📊 Gestão</h2><p class="mudo">Setores, resumo do dia e exportação. Exige login.</p></a>
+</div>
+{% endblock %}
