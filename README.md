@@ -1,4 +1,5 @@
 # Sistema de Senhas de Atendimento — Prefeitura de São João da Boa Vista
+Projeto desenvolvido por Luana da Silva Araújo, estudante de Análise e Desenvolvimento de Sistemas (UNIFEOB).
 
 Aplicação web (Flask + SQLite, Python 3.15) para organizar a fila de atendimento ao cidadão.
 
